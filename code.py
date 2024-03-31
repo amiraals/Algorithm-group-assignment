@@ -154,6 +154,42 @@ class HospitalManagementSystem:
         exit()
 
 
+    def test(self):
+        while True:
+            print("\n--- Hospital Management System Menu ---")
+            print("1. Add a new patient")
+            print("2. Update patient record")
+            print("3. Remove patient record")
+            print("4. Schedule an appointment")
+            print("5. Add patient to consultation queue")
+            print("6. Process consultation")
+            print("7. Issue a prescription")
+            print("8. Exit")
+            choice = input("Enter your choice: ")
+
+            if choice == "1":
+                self.add_new_patient()
+            elif choice == "2":
+                self.update_patient_record()
+            elif choice == "3":
+                self.remove_patient_record()
+            elif choice == "4":
+                self.schedule_appointment()
+            elif choice == "5":
+                self.add_patient_to_consultation_queue()
+            elif choice == "6":
+                self.process_consultation()
+            elif choice == "7":
+                self.issue_prescription()
+            elif choice == "8":
+                print("Exiting...")
+                break
+            else:
+                print("Invalid choice. Please try again.")
+
+system = HospitalManagementSystem()
+system.test()
+
 # Example usage:
 hospital = HospitalManagementSystem()
 hospital.add_new_patient()
