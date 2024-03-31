@@ -32,7 +32,16 @@ class Patient:
         self.condition = medical_condition
         self.age = age
         self.id = id_num
+        self.prescription_stack = []
 
+    def pushPrescription(self, prescription):
+        self.prescription_stack.append(prescription)
+
+    def popPrescription(self):
+        if self.prescription_stack:
+            return self.prescription_stack.pop()
+        else:
+            return None
 
 class Doctor:
     def __init__(self, doctor_name, doctor_id, specialty, id_num):
@@ -142,7 +151,7 @@ class HospitalManagementSystem:
 
     def process_consultation(self):
         if self.consultation_queue:
-            patient = self.consultation_queue.pop(0)
+            patient = self.consultation_queue.popleft()
             return f"Consultation processed for {patient.name}"
         else:
             return "No patients in the consultation queue"
