@@ -143,7 +143,7 @@ class HospitalManagementSystem:
     def process_consultation(self):
         if self.consultation_queue:
             patient = self.consultation_queue.pop(0)
-            return f"Consultation processed for patient {patient.name}"
+            return f"Consultation processed for {patient.name}"
         else:
             return "No patients in the consultation queue"
 
@@ -152,7 +152,7 @@ class HospitalManagementSystem:
             patient = self.consultation_queue[0]
             prescription = generate_prescriptions(1)[0]
             self.prescriptions.append(prescription)
-            return f"Prescription issued for patient {patient.name}"
+            return f"Prescription issued for {patient.name}"
         else:
             return "No patients in the consultation queue"
 
@@ -200,11 +200,3 @@ class HospitalManagementSystem:
 
 system = HospitalManagementSystem()
 system.test()
-
-# Example usage:
-hospital = HospitalManagementSystem()
-hospital.add_new_patient()
-hospital.add_to_consultation_queue("PAT1")
-print(hospital.process_consultation())
-print(hospital.issue_prescription())
-hospital.exit_program()
