@@ -89,6 +89,22 @@ class HospitalManagementSystem:
                 f"Name: {patient.name}, ID: {patient.patient_id}, Condition: {patient.condition}, Age: {patient.age}")
             
     def update_patient_record(self):
+        patient_id = input("Enter patient ID to update: ")
+        if patient_id in self.patients:
+            patient = self.patients[patient_id]
+            choice = int(input("Press 1 to update age, and 2 to update medical condition: "))
+            if choice == 1:
+                new_age = int(input("Enter new age: "))
+                patient.age = new_age
+                print(f"Patient {patient_id}'s age updated to {new_age}.")
+            elif choice == 2:
+                new_condition = input("Enter the new medical condition: ")
+                patient.condition = new_condition
+                print(f"Patient {patient_id}'s medical condition updated to {new_condition}.")
+            else:
+                print("Invalid choice.")
+        else:
+            print("Patient ID not found.")
     
     def remove_patient_record(self, patient_id):
         for patient in self.patients:
