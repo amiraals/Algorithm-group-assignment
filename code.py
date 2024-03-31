@@ -100,7 +100,10 @@ class HospitalManagementSystem:
                 break
                 
     def add_to_consultation_queue(self, patient_id):
-        
+        for patient in self.patients:
+            if patient.patient_id == patient_id:
+                self.consultation_queue.append(patient)
+                return
     
     def process_consultation(self):
     
