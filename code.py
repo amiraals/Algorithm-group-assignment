@@ -1,3 +1,24 @@
+from enum import Enum
+
+class MedicalCondition(Enum):
+    DIABETES = "Diabetes"
+    HYPERTENSION = "Hypertension"
+    ASTHMA = "Asthma"
+    COVID19 = "COVID-19"
+    FLU = "Flu"
+
+class Specialty(Enum):
+    CARDIOLOGY = "Cardiology"
+    NEUROLOGY = "Neurology"
+    GENERAL_PRACTICE = "General Practice"
+    PEDIATRICS = "Pediatrics"
+
+class MedicationType(Enum):
+    ANTIBIOTIC = "Antibiotic"
+    ANTIVIRAL = "Antiviral"
+    ANALGESIC = "Analgesic"
+    ANTI_INFLAMMATORY = "Anti-inflammatory"
+    VACCINE = "Vaccine"
 
 
 class Patient:
@@ -22,3 +43,28 @@ class Prescription:
         self.dosage = dosage
         self.id = id_num
 
+def generate_patients(num_patients):
+    patients = []
+    for i in range(1, num_patients + 1):
+        name = f"Patient {i}"  
+        medical_condition = random.choice(list(MedicalCondition)).value
+        age = random.randint(1, 100)  
+        patients.append(Patient(name, f"PAT{i}", medical_condition, age, i))
+    return patients
+
+def generate_doctors(num_doctors):
+    doctors = []
+    for i in range(1, num_doctors + 1):
+        doctor_name = f"Doctor {i}" 
+        specialty = random.choice(list(Specialty)).value
+        doctors.append(Doctor(doctor_name, f"DOC{i}", specialty, i))
+    return doctors
+
+
+def generate_prescriptions(num_prescriptions):
+    prescriptions = []
+    for i in range(1, num_prescriptions + 1):
+        medication_type = random.choice(list(MedicationType)).value
+        dosage = f"{random.randint(50, 500)}mg"  
+        prescriptions.append(Prescription(f"PRES{i}", medication_type, dosage, i))
+    return prescriptions
