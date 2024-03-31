@@ -202,9 +202,10 @@ class HospitalManagementSystem:
         exit()
 
     def test(self):
-        num_patients = int(input("Enter the number of new patients to add: "))
+        print("Welcome to the hospital system")
+        num_patients = int(input("Please enter the number of patients to add: "))
         self.add_new_patient(num_patients)
-
+        
         while True:
             print("\n--- Hospital Management System Menu ---")
             print("1. Update patient record")
