@@ -9,7 +9,8 @@ class Patient:
         self.id = id_num
 
 class Doctor:
-    def __init__(self, doctor_id, specialty, id_num):
+    def __init__(self, doctor_name, doctor_id, specialty, id_num):
+        self.doctor_name = doctor_name
         self.doctor_id = doctor_id
         self.specialty = specialty
         self.id = id_num
