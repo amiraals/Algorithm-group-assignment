@@ -68,3 +68,27 @@ def generate_prescriptions(num_prescriptions):
         dosage = f"{random.randint(50, 500)}mg"  
         prescriptions.append(Prescription(f"PRES{i}", medication_type, dosage, i))
     return prescriptions
+
+
+
+class HospitalManagementSystem:
+    def __init__(self):
+        self.patients = []
+        self.doctors = generate_doctors(5)
+        self.prescriptions = []
+        self.consultation_queue = []
+        self.appointments = []
+        
+    def add_new_patient(self):
+    
+    def update_patient_record(self):
+    
+    def remove_patient_record(self):
+    
+    def schedule_appointment(self):
+    
+    def add_to_consultation_queue(self):
+    
+    def process_consultation(self):
+    
+    def issue_prescription(self):
