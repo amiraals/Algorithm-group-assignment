@@ -88,22 +88,26 @@ class HospitalManagementSystem:
             if patient.patient_id == patient_id:
                 self.patients.remove(patient)
                 return "The patient has been removed"
+        return "Patient not found!"
 
     def schedule_appointment(self, patient_id, doctor_id, appointment_details):
         for patient in self.patients:
             if patient.patient_id == patient_id:
                 for doctor in self.doctors:
                     if doctor.doctor_id == doctor_id:
-                        appointment_details['Doctor'] = doctor
-                        patient.appointment_details = appointment_details
-                        return
-                break
+                        appointment = Appointment(patient, doctor, appointment_details)
+                        self.appointments.append(appointment_details)
+                        return "The appointment is scheduled"
+                    else:
+                        return "ERROR. Information missing"
                 
     def add_to_consultation_queue(self, patient_id):
         for patient in self.patients:
             if patient.patient_id == patient_id:
                 self.consultation_queue.append(patient)
-                return
+                return "The patient is added to the consultation queue"
+            else:
+                return "ERROR. Patient not found"
     
     def process_consultation(self):
     
