@@ -165,6 +165,39 @@ class HospitalManagementSystem:
         else:
             return "No patients in the consultation queue"
 
+    def search_patient(self):
+        patient_id = input("Enter patient ID to search: ")
+        if patient_id not in self.patients:
+            print("Patient not found!")
+            return
+
+    # Assuming patient exists
+        patient = self.patients[patient_id]
+        print(f"\nSummary for {patient.name} (ID: {patient.patient_id}):")
+        print(f"  Condition: {patient.condition}")
+        print(f"  Age: {patient.age}")
+ 
+    # Find the patient's appointment, if any
+        appointment_found = False
+        for appointment in self.appointments:
+            if appointment[0].patient_id == patient_id:
+                print(f"  Appointment with Dr. {appointment[1].doctor_name} on {appointment[2]}")
+                appointment_found = True
+                break
+        if not appointment_found:
+            print("  No appointment scheduled.")
+
+    # Find the patient's prescription, if any
+        prescription_found = False
+        for prescription in self.prescriptions:
+            if prescription.id_num == patient.id:  # Assuming id_num links prescription to patient
+                print(f"  Prescription: {prescription.medication_type} ({prescription.dosage})")
+                prescription_found = True
+                break
+        if not prescription_found:
+            print("  No prescription issued.")
+
+
     def exit_program(self):
         print("Exiting program...")
         exit()
@@ -179,7 +212,8 @@ class HospitalManagementSystem:
             print("5. Add patient to consultation queue")
             print("6. Process consultation")
             print("7. Issue a prescription")
-            print("8. Exit")
+            print("8. Search for a paitent")
+            print("9. Exit")
             choice = input("Enter your choice: ")
 
             if choice == "1":
@@ -202,10 +236,11 @@ class HospitalManagementSystem:
             elif choice == "7":
                 print(self.issue_prescription())
             elif choice == "8":
+                print(self.search_patient())
+            elif choice == "9":
                 self.exit_program()
             else:
                 print("Invalid choice. Please try again.")
-
 
 system = HospitalManagementSystem()
 system.test()
