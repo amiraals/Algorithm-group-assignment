@@ -1,5 +1,6 @@
 import random
 from enum import Enum
+from collections import deque
 
 
 class MedicalCondition(Enum):
@@ -32,7 +33,7 @@ class Patient:
         self.condition = medical_condition
         self.age = age
         self.id = id_num
-        self.prescription_stack = []
+        self.prescription_stack = deque()
 
     def pushPrescription(self, prescription):
         self.prescription_stack.append(prescription)
@@ -42,6 +43,7 @@ class Patient:
             return self.prescription_stack.pop()
         else:
             return None
+
 
 class Doctor:
     def __init__(self, doctor_name, doctor_id, specialty, id_num):
@@ -92,17 +94,15 @@ class HospitalManagementSystem:
         self.patients = {}
         self.doctors = generate_doctors(5)
         self.prescriptions = []
-        self.consultation_queue = []
+        self.consultation_queue = deque()
         self.appointments = []
 
-    def add_new_patient(self):
-        num_patients = int(input("Enter the number of new patients to add: "))
-        new_patients = generate_patients(num_patients)  # Use the existing function for generation
-        print(num_patients, "New patients are added:")
+    def add_new_patient(self, num_patients):
+        new_patients = generate_patients(num_patients)
+        print(f"{num_patients} New patients are added:")
         for patient in new_patients:
             self.patients[patient.patient_id] = patient
-            print(
-                f"Name: {patient.name}, ID: {patient.patient_id}, Condition: {patient.condition}, Age: {patient.age}")
+            print(f"Name: {patient.name}, ID: {patient.patient_id}, Condition: {patient.condition}, Age: {patient.age}")
 
     def update_patient_record(self):
         patient_id = input("Enter patient ID to update: ")
@@ -171,13 +171,13 @@ class HospitalManagementSystem:
             print("Patient not found!")
             return
 
-    # Assuming patient exists
+        # Assuming patient exists
         patient = self.patients[patient_id]
         print(f"\nSummary for {patient.name} (ID: {patient.patient_id}):")
         print(f"  Condition: {patient.condition}")
         print(f"  Age: {patient.age}")
- 
-    # Find the patient's appointment, if any
+
+        # Find the patient's appointment, if any
         appointment_found = False
         for appointment in self.appointments:
             if appointment[0].patient_id == patient_id:
@@ -187,7 +187,7 @@ class HospitalManagementSystem:
         if not appointment_found:
             print("  No appointment scheduled.")
 
-    # Find the patient's prescription, if any
+        # Find the patient's prescription, if any
         prescription_found = False
         for prescription in self.prescriptions:
             if prescription.id_num == patient.id:  # Assuming id_num links prescription to patient
@@ -197,50 +197,50 @@ class HospitalManagementSystem:
         if not prescription_found:
             print("  No prescription issued.")
 
-
     def exit_program(self):
         print("Exiting program...")
         exit()
 
     def test(self):
+        num_patients = int(input("Enter the number of new patients to add: "))
+        self.add_new_patient(num_patients)
+
         while True:
             print("\n--- Hospital Management System Menu ---")
-            print("1. Add a new patient")
-            print("2. Update patient record")
-            print("3. Remove patient record")
-            print("4. Schedule an appointment")
-            print("5. Add patient to consultation queue")
-            print("6. Process consultation")
-            print("7. Issue a prescription")
-            print("8. Search for a paitent")
-            print("9. Exit")
+            print("1. Update patient record")
+            print("2. Remove patient record")
+            print("3. Schedule an appointment")
+            print("4. Add patient to consultation queue")
+            print("5. Process consultation")
+            print("6. Issue a prescription")
+            print("7. Search for a patient")
+            print("8. Exit")
             choice = input("Enter your choice: ")
 
             if choice == "1":
-                self.add_new_patient()
-            elif choice == "2":
                 self.update_patient_record()
-            elif choice == "3":
+            elif choice == "2":
                 patient_id = input("Enter patient ID to remove: ")
                 print(self.remove_patient_record(patient_id))
-            elif choice == "4":
+            elif choice == "3":
                 patient_id = input("Enter patient ID: ")
                 doctor_id = input("Enter doctor ID: ")
                 appointment_details = input("Enter appointment details: ")
                 print(self.schedule_appointment(patient_id, doctor_id, appointment_details))
-            elif choice == "5":
+            elif choice == "4":
                 patient_id = input("Enter patient ID: ")
                 print(self.add_to_consultation_queue(patient_id))
-            elif choice == "6":
+            elif choice == "5":
                 print(self.process_consultation())
-            elif choice == "7":
+            elif choice == "6":
                 print(self.issue_prescription())
+            elif choice == "7":
+                self.search_patient()
             elif choice == "8":
-                print(self.search_patient())
-            elif choice == "9":
                 self.exit_program()
             else:
                 print("Invalid choice. Please try again.")
+
 
 system = HospitalManagementSystem()
 system.test()
