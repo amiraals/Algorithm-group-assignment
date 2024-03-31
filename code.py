@@ -83,11 +83,24 @@ class HospitalManagementSystem:
     
     def update_patient_record(self):
     
-    def remove_patient_record(self):
-    
-    def schedule_appointment(self):
-    
-    def add_to_consultation_queue(self):
+    def remove_patient_record(self, patient_id):
+        for patient in self.patients:
+            if patient.patient_id == patient_id:
+                self.patients.remove(patient)
+                return "The patient has been removed"
+
+    def schedule_appointment(self, patient_id, doctor_id, appointment_details):
+        for patient in self.patients:
+            if patient.patient_id == patient_id:
+                for doctor in self.doctors:
+                    if doctor.doctor_id == doctor_id:
+                        appointment_details['Doctor'] = doctor
+                        patient.appointment_details = appointment_details
+                        return
+                break
+                
+    def add_to_consultation_queue(self, patient_id):
+        
     
     def process_consultation(self):
     
