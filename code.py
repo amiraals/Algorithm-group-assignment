@@ -73,14 +73,21 @@ def generate_prescriptions(num_prescriptions):
 
 class HospitalManagementSystem:
     def __init__(self):
-        self.patients = []
+        self.patients = {}
         self.doctors = generate_doctors(5)
         self.prescriptions = []
         self.consultation_queue = []
         self.appointments = []
         
     def add_new_patient(self):
-    
+        num_patients = int(input("Enter the number of new patients to add: "))
+        new_patients = generate_patients(num_patients)  # Use the existing function for generation
+        print(num_patients, "New patients are added:")
+        for patient in new_patients:
+            self.patients[patient.patient_id] = patient
+            print(
+                f"Name: {patient.name}, ID: {patient.patient_id}, Condition: {patient.condition}, Age: {patient.age}")
+            
     def update_patient_record(self):
     
     def remove_patient_record(self, patient_id):
