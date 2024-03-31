@@ -1,7 +1,8 @@
 
 
 class Patient:
-    def __init__(self, patient_id, medical_condition, age, id_num):
+    def __init__(self, name, patient_id, medical_condition, age, id_num):
+        self.name = name
         self.patient_id = patient_id
         self.condition = medical_condition
         self.age = age
