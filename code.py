@@ -177,34 +177,47 @@ class HospitalManagementSystem:
         else:
             return "No patients in the consultation queue"
 
-    def search_patient(self):
-        patient_id = input("Enter patient ID to search: ")
-        if patient_id not in self.patients:
+    def search_patient(self, patient_id):
+        patient_ids_sorted = sorted(self.patients.keys())
+        patient = None  
+
+        low, high = 0, len(patient_ids_sorted) - 1
+
+        while low <= high:
+            mid = (low + high) // 2
+            mid_patient_id = patient_ids_sorted[mid]
+
+            if mid_patient_id < patient_id:
+                low = mid + 1
+            elif mid_patient_id > patient_id:
+                high = mid - 1
+            else:
+                patient = self.patients[mid_patient_id]  
+                break 
+
+        if patient is not None:
+            print(f"\nSummary for {patient.name} (ID: {patient.patient_id}):")
+            print(f"  Condition: {patient.condition}")
+            print(f"  Age: {patient.age}")
+  
+            appointment_found = False
+            for appointment in self.appointments:
+                if appointment[0].patient_id == patient_id:
+                    print(f"  Appointment with Dr. {appointment[1].doctor_name} on {appointment[2]}")
+                    appointment_found = True
+            if not appointment_found:
+                print("  No appointment scheduled.")
+
+            if patient.prescription_stack:
+                print("  Prescriptions:")
+                for prescription in list(patient.prescription_stack):
+                    print(f"    - {prescription.medication_type} ({prescription.dosage})")
+            else:
+                print("  No prescriptions issued.")
+        else:
             print("Patient not found!")
-            return
 
-        patient = self.patients[patient_id]
-        print(f"\nSummary for {patient.name} (ID: {patient.patient_id}):")
-        print(f"  Condition: {patient.condition}")
-        print(f"  Age: {patient.age}")
 
-        appointment_found = False
-        for appointment in self.appointments:
-            if appointment[0].patient_id == patient_id:
-                print(f"  Appointment with Dr. {appointment[1].doctor_name} on {appointment[2]}")
-                appointment_found = True
-                break
-        if not appointment_found:
-            print("  No appointment scheduled.")
-
-        prescription_found = False
-        for prescription in self.prescriptions:
-            if prescription.id == patient.id:
-                print(f"  Prescription: {prescription.medication_type} ({prescription.dosage})")
-                prescription_found = True
-                break
-        if not prescription_found:
-            print("  No prescription issued.")
 
     def exit_program(self):
         print("Exiting program...")
@@ -242,14 +255,15 @@ class HospitalManagementSystem:
             elif choice == "5":
                 num_patients_to_add = int(input("How many patients do you want to add to the consultation queue? "))
                 for i in range(num_patients_to_add):
-                    patient_id = input(".Enter patient ID: ")
+                    patient_id = input("Enter patient ID: ")
                     print(self.add_to_consultation_queue(patient_id))
             elif choice == "6":
                 print(self.process_consultation())
             elif choice == "7":
                 print(self.issue_prescription())
             elif choice == "8":
-                print(self.search_patient())
+                patient_id = input("Enter patient ID:")
+                print(self.search_patient(patient_id))
             elif choice == "9":
                 self.exit_program()
             else:
