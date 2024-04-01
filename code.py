@@ -1,6 +1,7 @@
 import random
 from enum import Enum
 from collections import deque
+import datetime
 
 
 class MedicalCondition(Enum):
@@ -66,7 +67,7 @@ def generate_patients(num_patients):
     for i in range(1, num_patients + 1):
         name = f"Patient {i}"
         medical_condition = random.choice(list(MedicalCondition)).value
-        age = random.randint(1, 100)
+        age = random.randint(1, 93)
         patients.append(Patient(name, f"PAT{i}", medical_condition, age, i))
     return patients
 
@@ -119,6 +120,12 @@ class HospitalManagementSystem:
                 print(f"Patient {patient_id}'s medical condition updated to {new_condition}.")
             else:
                 print("Invalid choice.")
+
+            print(f"\nUpdated Patient Details:")
+            print(f"Name: {patient.name}")
+            print(f"ID: {patient.patient_id}")
+            print(f"Condition: {patient.condition}")
+            print(f"Age: {patient.age}")
         else:
             print("Patient ID not found.")
 
@@ -134,9 +141,13 @@ class HospitalManagementSystem:
             patient = self.patients[patient_id]
             for doctor in self.doctors:
                 if doctor.doctor_id == doctor_id:
+                    today = datetime.date.today()
+                    future = today + datetime.timedelta(days=random.randint(1, 365))
+                    appointment_date = future.strftime("%Y-%m-%d")
+
                     appointment = (patient, doctor, appointment_details)
                     self.appointments.append(appointment)
-                    return "The appointment is scheduled"
+                    return f"The appointment is scheduled for {patient.name} with {doctor.doctor_name} for {appointment_date}"
             return "Doctor not found"
         else:
             return "Patient not found"
@@ -161,6 +172,7 @@ class HospitalManagementSystem:
             patient = self.consultation_queue[0]
             prescription = generate_prescriptions(1)[0]
             self.prescriptions.append(prescription)
+            patient.pushPrescription(prescription)
             return f"Prescription issued for {patient.name}"
         else:
             return "No patients in the consultation queue"
@@ -171,13 +183,11 @@ class HospitalManagementSystem:
             print("Patient not found!")
             return
 
-        # Assuming patient exists
         patient = self.patients[patient_id]
         print(f"\nSummary for {patient.name} (ID: {patient.patient_id}):")
         print(f"  Condition: {patient.condition}")
         print(f"  Age: {patient.age}")
 
-        # Find the patient's appointment, if any
         appointment_found = False
         for appointment in self.appointments:
             if appointment[0].patient_id == patient_id:
@@ -187,10 +197,9 @@ class HospitalManagementSystem:
         if not appointment_found:
             print("  No appointment scheduled.")
 
-        # Find the patient's prescription, if any
         prescription_found = False
         for prescription in self.prescriptions:
-            if prescription.id_num == patient.id:  # Assuming id_num links prescription to patient
+            if prescription.id == patient.id:
                 print(f"  Prescription: {prescription.medication_type} ({prescription.dosage})")
                 prescription_found = True
                 break
@@ -204,40 +213,44 @@ class HospitalManagementSystem:
     def test(self):
         print("Welcome to the hospital system")
         num_patients = int(input("Please enter the number of patients to add: "))
-        self.add_new_patient(num_patients)
-        
+
         while True:
             print("\n--- Hospital Management System Menu ---")
-            print("1. Update patient record")
-            print("2. Remove patient record")
-            print("3. Schedule an appointment")
-            print("4. Add patient to consultation queue")
-            print("5. Process consultation")
-            print("6. Issue a prescription")
-            print("7. Search for a patient")
-            print("8. Exit")
+            print("1. List patients")
+            print("2. Update patient record")
+            print("3. Remove patient record")
+            print("4. Schedule an appointment")
+            print("5. Add patient to consultation queue")
+            print("6. Process consultation")
+            print("7. Issue a prescription")
+            print("8. Search for a paitent")
+            print("9. Exit")
             choice = input("Enter your choice: ")
 
             if choice == "1":
-                self.update_patient_record()
+                self.add_new_patient(num_patients)
             elif choice == "2":
+                self.update_patient_record()
+            elif choice == "3":
                 patient_id = input("Enter patient ID to remove: ")
                 print(self.remove_patient_record(patient_id))
-            elif choice == "3":
+            elif choice == "4":
                 patient_id = input("Enter patient ID: ")
                 doctor_id = input("Enter doctor ID: ")
                 appointment_details = input("Enter appointment details: ")
                 print(self.schedule_appointment(patient_id, doctor_id, appointment_details))
-            elif choice == "4":
-                patient_id = input("Enter patient ID: ")
-                print(self.add_to_consultation_queue(patient_id))
             elif choice == "5":
-                print(self.process_consultation())
+                num_patients_to_add = int(input("How many patients do you want to add to the consultation queue? "))
+                for i in range(num_patients_to_add):
+                    patient_id = input(".Enter patient ID: ")
+                    print(self.add_to_consultation_queue(patient_id))
             elif choice == "6":
-                print(self.issue_prescription())
+                print(self.process_consultation())
             elif choice == "7":
-                self.search_patient()
+                print(self.issue_prescription())
             elif choice == "8":
+                print(self.search_patient())
+            elif choice == "9":
                 self.exit_program()
             else:
                 print("Invalid choice. Please try again.")
