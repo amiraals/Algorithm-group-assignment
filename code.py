@@ -102,6 +102,12 @@ class HospitalManagementSystem:
         new_patients = generate_patients(num_patients)
         for patient in new_patients:
             self.patients[patient.patient_id] = patient
+            
+    def list_doctors(self):
+        print("Available doctors:")
+        for doctor in self.doctors:
+            print(f"Doctor Name: {doctor.doctor_name}, ID: {doctor.doctor_id}, Specialty: {doctor.specialty}")
+
 
     def update_patient_record(self):
         patient_id = input("Enter patient ID to update: ")
@@ -134,21 +140,35 @@ class HospitalManagementSystem:
         else:
             return "Patient not found!"
 
-    def schedule_appointment(self, patient_id, doctor_id, appointment_details):
-        if patient_id in self.patients:
-            patient = self.patients[patient_id]
-            for doctor in self.doctors:
-                if doctor.doctor_id == doctor_id:
-                    today = datetime.date.today()
-                    future = today + datetime.timedelta(days=random.randint(1, 365))
-                    appointment_date = future.strftime("%Y-%m-%d")
 
-                    appointment = (patient, doctor, appointment_details)
-                    self.appointments.append(appointment)
-                    return f"The appointment is scheduled for {patient.name} with {doctor.doctor_name} for {appointment_date}"
-            return "Doctor not found"
-        else:
+    def schedule_appointment(self):
+        patient_id = input("Enter patient ID to schedule an appointment: ")
+    
+        if patient_id not in self.patients:
             return "Patient not found"
+
+        patient = self.patients[patient_id]
+
+        self.list_doctors()
+        doctor_id = input("Enter doctor ID for the appointment: ")
+
+        doctor_found = None
+        for doctor in self.doctors:
+            if doctor.doctor_id == doctor_id:
+                doctor_found = doctor
+                break
+
+        if doctor_found:
+            today = datetime.date.today()
+            future = today + datetime.timedelta(days=random.randint(1, 365))
+            appointment_date = future.strftime("%Y-%m-%d")
+
+            appointment = (patient, doctor_found, appointment_date)
+            self.appointments.append(appointment)
+            return f"The appointment is scheduled for {patient.name} with {doctor_found.doctor_name} for {appointment_date}"
+    
+        return "Doctor not found"  
+
 
     def add_to_consultation_queue(self, patient_id):
         if patient_id in self.patients:
@@ -249,10 +269,7 @@ class HospitalManagementSystem:
                 patient_id = input("Enter patient ID to remove: ")
                 print(self.remove_patient_record(patient_id))
             elif choice == "4":
-                patient_id = input("Enter patient ID: ")
-                doctor_id = input("Enter doctor ID: ")
-                appointment_details = input("Enter appointment details: ")
-                print(self.schedule_appointment(patient_id, doctor_id, appointment_details))
+                print(self.schedule_appointment())
             elif choice == "5":
                 num_patients_to_add = int(input("How many patients do you want to add to the consultation queue? "))
                 for i in range(num_patients_to_add):
