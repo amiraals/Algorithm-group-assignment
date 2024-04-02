@@ -1,0 +1,51 @@
+import time
+import matplotlib.pyplot as plt
+import numpy as np
+
+class Patient:
+    def __init__(self, name):
+        self.name = name
+        self.prescription_stack = []
+
+    def pushPrescription(self, prescription):
+        self.prescription_stack.append(prescription)
+
+class HospitalManagementSystem:
+    def __init__(self):
+        self.processed_patients = []
+
+    def issue_prescription(self, num_patients):
+        # Simulating processed patients
+        for i in range(num_patients):
+            patient = Patient(f"Patient {i}")
+            self.processed_patients.append(patient)
+
+        start_time = time.time()
+        for patient in self.processed_patients:
+            prescription = "Prescription"  # Dummy prescription
+            patient.pushPrescription(prescription)
+        end_time = time.time()
+
+        self.processed_patients.clear()  # Clear the list after issuing prescriptions
+        return end_time - start_time
+
+# Function to measure time complexity
+def measure_time_complexity(n):
+    hms = HospitalManagementSystem()
+    return hms.issue_prescription(n)
+
+# Varying the number of patients
+patients_range = np.arange(100, 2000, 100)
+execution_times = []
+
+for n in patients_range:
+    execution_time = measure_time_complexity(n)
+    execution_times.append(execution_time)
+
+# Plotting the results
+plt.plot(patients_range, execution_times, marker='o')
+plt.xlabel('Number of Patients')
+plt.ylabel('Execution Time (seconds)')
+plt.title('Time Complexity Analysis of Issuing Prescriptions')
+plt.grid(True)
+plt.show()
