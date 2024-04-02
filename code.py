@@ -371,6 +371,9 @@ class HospitalManagementSystem:
                 print(self.remove_patient_record(patient_id))
             elif choice == "4":
                 print(self.schedule_appointment())
+                queue_display = input("Do you want to display the consultation queue (y/n)? ")
+                if queue_display.lower() == "y":
+                    print(self.print_consultation_queue())
             elif choice == "5":
                 print(self.process_consultation())
                 self.print_consultation_queue()
