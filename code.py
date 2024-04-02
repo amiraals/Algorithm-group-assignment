@@ -1,7 +1,6 @@
 import random
 from enum import Enum
 from collections import deque
-import datetime
 
 
 class MedicalCondition(Enum):
@@ -67,8 +66,8 @@ def generate_patients(num_patients):
     for i in range(1, num_patients + 1):
         name = f"Patient {i}"
         medical_condition = random.choice(list(MedicalCondition)).value
-        age = random.randint(1, 93)
-        patients.append(Patient(name, f"P{i}", medical_condition, age, i))
+        age = random.randint(1, 100)
+        patients.append(Patient(name, f"PAT{i}", medical_condition, age, i))
     return patients
 
 
@@ -100,14 +99,10 @@ class HospitalManagementSystem:
 
     def add_new_patient(self, num_patients):
         new_patients = generate_patients(num_patients)
+        print(f"{num_patients} New patients are added:")
         for patient in new_patients:
             self.patients[patient.patient_id] = patient
-            
-    def list_doctors(self):
-        print("Available doctors:")
-        for doctor in self.doctors:
-            print(f"Doctor Name: {doctor.doctor_name}, ID: {doctor.doctor_id}, Specialty: {doctor.specialty}")
-
+            print(f"Name: {patient.name}, ID: {patient.patient_id}, Condition: {patient.condition}, Age: {patient.age}")
 
     def update_patient_record(self):
         patient_id = input("Enter patient ID to update: ")
@@ -124,12 +119,6 @@ class HospitalManagementSystem:
                 print(f"Patient {patient_id}'s medical condition updated to {new_condition}.")
             else:
                 print("Invalid choice.")
-
-            print(f"\nUpdated Patient Details:")
-            print(f"Name: {patient.name}")
-            print(f"ID: {patient.patient_id}")
-            print(f"Condition: {patient.condition}")
-            print(f"Age: {patient.age}")
         else:
             print("Patient ID not found.")
 
@@ -140,149 +129,119 @@ class HospitalManagementSystem:
         else:
             return "Patient not found!"
 
-
-    def schedule_appointment(self):
-        patient_id = input("Enter patient ID to schedule an appointment: ")
-    
-        if patient_id not in self.patients:
-            return "Patient not found"
-
-        patient = self.patients[patient_id]
-
-        self.list_doctors()
-        doctor_id = input("Enter doctor ID for the appointment: ")
-
-        doctor_found = None
-        for doctor in self.doctors:
-            if doctor.doctor_id == doctor_id:
-                doctor_found = doctor
-                break
-
-        if doctor_found:
-            today = datetime.date.today()
-            future = today + datetime.timedelta(days=random.randint(1, 365))
-            appointment_date = future.strftime("%Y-%m-%d")
-
-            appointment = (patient, doctor_found, appointment_date)
-            self.appointments.append(appointment)
-            return f"The appointment is scheduled for {patient.name} with {doctor_found.doctor_name} for {appointment_date}"
-    
-        return "Doctor not found"  
-
-
-    def add_to_consultation_queue(self, patient_id):
+    def schedule_appointment(self, patient_id, doctor_id, appointment_details):
         if patient_id in self.patients:
             patient = self.patients[patient_id]
-            self.consultation_queue.append(patient)
-            return "The patient is added to the consultation queue"
+            for doctor in self.doctors:
+                if doctor.doctor_id == doctor_id:
+                    appointment = (patient, doctor, appointment_details)
+                    self.appointments.append(appointment)
+                    self.consultation_queue.append(patient)  # Add patient to consultation queue
+                    return "The appointment is scheduled and patient is added to the consultation queue"
+            return "Doctor not found"
         else:
             return "Patient not found"
 
     def process_consultation(self):
-        if self.consultation_queue:
-            patient = self.consultation_queue.popleft()
-            return f"Consultation processed for {patient.name}"
-        else:
+        if not self.consultation_queue:
             return "No patients in the consultation queue"
+
+        processed_patients = []
+
+        while self.consultation_queue:
+            patient = self.consultation_queue.popleft()
+            processed_patients.append(patient)
+
+        self.processed_patients = processed_patients  # Store processed patients
+        return "Consultations processed for: " + ", ".join([patient.name for patient in processed_patients])
+
+    def print_consultation_queue(self):
+        if self.consultation_queue:
+            print("Order of patients in consultation queue:", ", ".join([patient.name for patient in self.consultation_queue]))
+        else:
+            print("Consultation queue is empty")
 
     def issue_prescription(self):
-        if self.consultation_queue:
-            patient = self.consultation_queue[0]
-            prescription = generate_prescriptions(1)[0]
-            self.prescriptions.append(prescription)
-            patient.pushPrescription(prescription)
-            return f"Prescription issued for {patient.name}"
+        if self.processed_patients:  # Check if there are processed patients
+            prescriptions_issued = []
+
+            for patient in self.processed_patients:
+                prescription = generate_prescriptions(1)[0]
+                patient.pushPrescription(prescription)
+                prescriptions_issued.append(patient.name)
+
+            self.processed_patients.clear()  # Clear the list after issuing prescriptions
+            return "Prescriptions issued for: " + ", ".join(prescriptions_issued)
         else:
-            return "No patients in the consultation queue"
+            return "No patients to issue prescriptions to"
 
-    def search_patient(self, patient_id):
-        patient_ids_sorted = sorted(self.patients.keys())
-        patient = None  
-
-        low, high = 0, len(patient_ids_sorted) - 1
-
-        while low <= high:
-            mid = (low + high) // 2
-            mid_patient_id = patient_ids_sorted[mid]
-
-            if mid_patient_id < patient_id:
-                low = mid + 1
-            elif mid_patient_id > patient_id:
-                high = mid - 1
-            else:
-                patient = self.patients[mid_patient_id]  
-                break 
-
-        if patient is not None:
-            print(f"\nSummary for {patient.name} (ID: {patient.patient_id}):")
-            print(f"  Condition: {patient.condition}")
-            print(f"  Age: {patient.age}")
-  
-            appointment_found = False
-            for appointment in self.appointments:
-                if appointment[0].patient_id == patient_id:
-                    print(f"  Appointment with Dr. {appointment[1].doctor_name} on {appointment[2]}")
-                    appointment_found = True
-            if not appointment_found:
-                print("  No appointment scheduled.")
-
-            if patient.prescription_stack:
-                print("  Prescriptions:")
-                for prescription in list(patient.prescription_stack):
-                    print(f"    - {prescription.medication_type} ({prescription.dosage})")
-            else:
-                print("  No prescriptions issued.")
-        else:
+    def search_patient(self):
+        patient_id = input("Enter patient ID to search: ")
+        if patient_id not in self.patients:
             print("Patient not found!")
+            return
 
+        # Assuming patient exists
+        patient = self.patients[patient_id]
+        print(f"\nSummary for {patient.name} (ID: {patient.patient_id}):")
+        print(f"  Condition: {patient.condition}")
+        print(f"  Age: {patient.age}")
 
+        # Find the patient's appointment, if any
+        appointment_found = False
+        for appointment in self.appointments:
+            if appointment[0].patient_id == patient_id:
+                print(f"  Appointment with Dr. {appointment[1].doctor_name} on {appointment[2]}")
+                appointment_found = True
+                break
+        if not appointment_found:
+            print("  No appointment scheduled.")
+
+        # Find the patient's prescription, if any
+        prescription_found = False
+        for prescription in patient.prescription_stack:
+            print(f"  Prescription: {prescription.medication_type} ({prescription.dosage})")
+            prescription_found = True
+        if not prescription_found:
+            print("  No prescription issued.")
 
     def exit_program(self):
         print("Exiting program...")
         exit()
 
     def test(self):
-        print("Welcome to the hospital system")
-        num_patients = int(input("Please enter the number of patients to add: "))
+        num_patients = int(input("Enter the number of new patients to add: "))
         self.add_new_patient(num_patients)
-        print(f"{num_patients} New patients are added")
 
         while True:
             print("\n--- Hospital Management System Menu ---")
-            print("1. List patients")
-            print("2. Update patient record")
-            print("3. Remove patient record")
-            print("4. Schedule an appointment")
-            print("5. Add patient to consultation queue")
-            print("6. Process consultation")
-            print("7. Issue a prescription")
-            print("8. Search for a paitent")
-            print("9. Exit")
+            print("1. Update patient record")
+            print("2. Remove patient record")
+            print("3. Schedule an appointment")
+            print("4. Process consultation")
+            print("5. Search for a patient")
+            print("6. Exit")
             choice = input("Enter your choice: ")
 
             if choice == "1":
-                for patient_id, patient in self.patients.items():
-                   print(f"Name: {patient.name}, ID: {patient.patient_id}, Condition: {patient.condition}, Age: {patient.age}")           
-            elif choice == "2":
                 self.update_patient_record()
-            elif choice == "3":
+            elif choice == "2":
                 patient_id = input("Enter patient ID to remove: ")
                 print(self.remove_patient_record(patient_id))
+            elif choice == "3":
+                patient_id = input("Enter patient ID: ")
+                doctor_id = input("Enter doctor ID: ")
+                appointment_details = input("Enter appointment details: ")
+                print(self.schedule_appointment(patient_id, doctor_id, appointment_details))
             elif choice == "4":
-                print(self.schedule_appointment())
-            elif choice == "5":
-                num_patients_to_add = int(input("How many patients do you want to add to the consultation queue? "))
-                for i in range(num_patients_to_add):
-                    patient_id = input("Enter patient ID: ")
-                    print(self.add_to_consultation_queue(patient_id))
-            elif choice == "6":
                 print(self.process_consultation())
-            elif choice == "7":
-                print(self.issue_prescription())
-            elif choice == "8":
-                patient_id = input("Enter patient ID:")
-                print(self.search_patient(patient_id))
-            elif choice == "9":
+                self.print_consultation_queue()
+                issue_prescription = input("Issue prescription for all patients (y/n)? ")
+                if issue_prescription.lower() == "y":
+                    print(self.issue_prescription())
+            elif choice == "5":
+                self.search_patient()
+            elif choice == "6":
                 self.exit_program()
             else:
                 print("Invalid choice. Please try again.")
