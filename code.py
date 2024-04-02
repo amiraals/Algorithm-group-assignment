@@ -27,7 +27,10 @@ class MedicationType(Enum):
 
 
 class Patient:
-    def __init__(self, name, patient_id, medical_condition, age, id_num):
+    """
+    Class to represent a Patient
+    """
+    def __init__(self, name, patient_id, medical_condition, age, id_num): # Initiating a constructor for the Patient class
         # Constructor for Patient class
         self.name = name
         self.patient_id = patient_id
@@ -49,6 +52,9 @@ class Patient:
 
 
 class Doctor:
+    """
+    Class to represent a Doctor
+    """
     def __init__(self, doctor_name, doctor_id, specialty, id_num):
         # Constructor for Doctor class
         self.doctor_name = doctor_name
@@ -58,6 +64,9 @@ class Doctor:
 
 
 class Prescription:
+    """
+    Class to represent a Prescription
+    """
     def __init__(self, prescription_id, medication_type, dosage, id_num):
         # Constructor for Prescription class
         self.prescription_id = prescription_id
@@ -136,17 +145,17 @@ class HospitalManagementSystem:
     def remove_patient_record(self, patient_id):
         # Remove patient's record
         if patient_id in self.patients:
-            del self.patients[patient_id]
+            del self.patients[patient_id] # This removes the patients record from the dictionary
             return "The patient has been removed"
         else:
             return "Patient not found!"
 
     def schedule_appointment(self, patient_id, doctor_id, appointment_details):
         # Schedule an appointment for a patient
-        if patient_id in self.patients:
+        if patient_id in self.patients: # Check if the patient exists
             patient = self.patients[patient_id]
-            for doctor in self.doctors:
-                if doctor.doctor_id == doctor_id:
+            for doctor in self.doctors: # Iterate through the list of doctors
+                if doctor.doctor_id == doctor_id: # Check if the doctor exists
                     appointment = (patient, doctor, appointment_details)
                     self.appointments.append(appointment)  # Add appointment to the list
                     self.consultation_queue.append(patient)  # Add patient to consultation queue
@@ -182,8 +191,8 @@ class HospitalManagementSystem:
             prescriptions_issued = []
 
             for patient in self.processed_patients:
-                prescription = generate_prescriptions(1)[0]
-                patient.pushPrescription(prescription)
+                prescription = generate_prescriptions(1)[0] # This generates a random prescription
+                patient.pushPrescription(prescription) # Push the prescription onto the patient's stack
                 prescriptions_issued.append(patient.name)
 
             self.processed_patients.clear()  # Clear the list after issuing prescriptions
