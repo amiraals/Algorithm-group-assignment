@@ -68,7 +68,7 @@ def generate_patients(num_patients):
         name = f"Patient {i}"
         medical_condition = random.choice(list(MedicalCondition)).value
         age = random.randint(1, 93)
-        patients.append(Patient(name, f"PAT{i}", medical_condition, age, i))
+        patients.append(Patient(name, f"P{i}", medical_condition, age, i))
     return patients
 
 
