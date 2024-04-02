@@ -13,6 +13,7 @@ def add_to_consultation_queue_time(n):
 patients_range = list(range(1000, 10001, 1000))
 t = [add_to_consultation_queue_time(num_patients) for num_patients in patients_range]
 
+plt.figure(figsize=(10, 5))
 plt.plot(patients_range, t, marker='o')
 plt.title('Time Complexity of Add to Consultation Queue')
 plt.xlabel('Number of patients (n)')
