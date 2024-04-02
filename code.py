@@ -28,17 +28,20 @@ class MedicationType(Enum):
 
 class Patient:
     def __init__(self, name, patient_id, medical_condition, age, id_num):
+        # Constructor for Patient class
         self.name = name
         self.patient_id = patient_id
         self.condition = medical_condition
         self.age = age
         self.id = id_num
-        self.prescription_stack = deque()
+        self.prescription_stack = deque()  # Initialize prescription stack for the patient
 
     def pushPrescription(self, prescription):
+        # Method to push a prescription onto the patient's prescription stack
         self.prescription_stack.append(prescription)
 
     def popPrescription(self):
+        # Method to pop a prescription from the patient's prescription stack
         if self.prescription_stack:
             return self.prescription_stack.pop()
         else:
@@ -47,6 +50,7 @@ class Patient:
 
 class Doctor:
     def __init__(self, doctor_name, doctor_id, specialty, id_num):
+        # Constructor for Doctor class
         self.doctor_name = doctor_name
         self.doctor_id = doctor_id
         self.specialty = specialty
@@ -55,6 +59,7 @@ class Doctor:
 
 class Prescription:
     def __init__(self, prescription_id, medication_type, dosage, id_num):
+        # Constructor for Prescription class
         self.prescription_id = prescription_id
         self.medication_type = medication_type
         self.dosage = dosage
@@ -62,6 +67,7 @@ class Prescription:
 
 
 def generate_patients(num_patients):
+    # Generate a list of random patients
     patients = []
     for i in range(1, num_patients + 1):
         name = f"Patient {i}"
@@ -72,6 +78,7 @@ def generate_patients(num_patients):
 
 
 def generate_doctors(num_doctors):
+    # Generate a list of random doctors
     doctors = []
     for i in range(1, num_doctors + 1):
         doctor_name = f"Doctor {i}"
@@ -81,6 +88,7 @@ def generate_doctors(num_doctors):
 
 
 def generate_prescriptions(num_prescriptions):
+    # Generate a list of random prescriptions
     prescriptions = []
     for i in range(1, num_prescriptions + 1):
         medication_type = random.choice(list(MedicationType)).value
@@ -91,20 +99,23 @@ def generate_prescriptions(num_prescriptions):
 
 class HospitalManagementSystem:
     def __init__(self):
-        self.patients = {}
-        self.doctors = generate_doctors(5)
-        self.prescriptions = []
-        self.consultation_queue = deque()
-        self.appointments = []
+        # Constructor for HospitalManagementSystem class
+        self.patients = {}  # Dictionary to store patients
+        self.doctors = generate_doctors(5)  # List of doctors
+        self.prescriptions = []  # List to store prescriptions
+        self.consultation_queue = deque()  # Queue to manage consultation order
+        self.appointments = []  # List to store appointments
 
     def add_new_patient(self, num_patients):
+        # Add new patients to the system
         new_patients = generate_patients(num_patients)
         print(f"{num_patients} New patients are added:")
         for patient in new_patients:
-            self.patients[patient.patient_id] = patient
+            self.patients[patient.patient_id] = patient  # Add patient to the dictionary
             print(f"Name: {patient.name}, ID: {patient.patient_id}, Condition: {patient.condition}, Age: {patient.age}")
 
     def update_patient_record(self):
+        # Update patient's record
         patient_id = input("Enter patient ID to update: ")
         if patient_id in self.patients:
             patient = self.patients[patient_id]
@@ -123,6 +134,7 @@ class HospitalManagementSystem:
             print("Patient ID not found.")
 
     def remove_patient_record(self, patient_id):
+        # Remove patient's record
         if patient_id in self.patients:
             del self.patients[patient_id]
             return "The patient has been removed"
@@ -130,12 +142,13 @@ class HospitalManagementSystem:
             return "Patient not found!"
 
     def schedule_appointment(self, patient_id, doctor_id, appointment_details):
+        # Schedule an appointment for a patient
         if patient_id in self.patients:
             patient = self.patients[patient_id]
             for doctor in self.doctors:
                 if doctor.doctor_id == doctor_id:
                     appointment = (patient, doctor, appointment_details)
-                    self.appointments.append(appointment)
+                    self.appointments.append(appointment)  # Add appointment to the list
                     self.consultation_queue.append(patient)  # Add patient to consultation queue
                     return "The appointment is scheduled and patient is added to the consultation queue"
             return "Doctor not found"
@@ -143,6 +156,7 @@ class HospitalManagementSystem:
             return "Patient not found"
 
     def process_consultation(self):
+        # Process consultations in the consultation queue
         if not self.consultation_queue:
             return "No patients in the consultation queue"
 
@@ -156,12 +170,14 @@ class HospitalManagementSystem:
         return "Consultations processed for: " + ", ".join([patient.name for patient in processed_patients])
 
     def print_consultation_queue(self):
+        # Print the order of patients in the consultation queue
         if self.consultation_queue:
             print("Order of patients in consultation queue:", ", ".join([patient.name for patient in self.consultation_queue]))
         else:
             print("Consultation queue is empty")
 
     def issue_prescription(self):
+        # Issue prescriptions for patients in the consultation queue
         if self.processed_patients:  # Check if there are processed patients
             prescriptions_issued = []
 
@@ -176,6 +192,7 @@ class HospitalManagementSystem:
             return "No patients to issue prescriptions to"
 
     def search_patient(self):
+        # Search for a patient by patient ID
         patient_id = input("Enter patient ID to search: ")
         if patient_id not in self.patients:
             print("Patient not found!")
@@ -206,10 +223,12 @@ class HospitalManagementSystem:
             print("  No prescription issued.")
 
     def exit_program(self):
+        # Exit the program
         print("Exiting program...")
         exit()
 
     def test(self):
+        # Test the Hospital Management System
         num_patients = int(input("Enter the number of new patients to add: "))
         self.add_new_patient(num_patients)
 
