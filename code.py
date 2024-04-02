@@ -100,10 +100,8 @@ class HospitalManagementSystem:
 
     def add_new_patient(self, num_patients):
         new_patients = generate_patients(num_patients)
-        print(f"{num_patients} New patients are added:")
         for patient in new_patients:
             self.patients[patient.patient_id] = patient
-            print(f"Name: {patient.name}, ID: {patient.patient_id}, Condition: {patient.condition}, Age: {patient.age}")
 
     def update_patient_record(self):
         patient_id = input("Enter patient ID to update: ")
@@ -226,6 +224,8 @@ class HospitalManagementSystem:
     def test(self):
         print("Welcome to the hospital system")
         num_patients = int(input("Please enter the number of patients to add: "))
+        self.add_new_patient(num_patients)
+        print(f"{num_patients} New patients are added")
 
         while True:
             print("\n--- Hospital Management System Menu ---")
@@ -241,7 +241,8 @@ class HospitalManagementSystem:
             choice = input("Enter your choice: ")
 
             if choice == "1":
-                self.add_new_patient(num_patients)
+                for patient_id, patient in self.patients.items():
+                   print(f"Name: {patient.name}, ID: {patient.patient_id}, Condition: {patient.condition}, Age: {patient.age}")           
             elif choice == "2":
                 self.update_patient_record()
             elif choice == "3":
