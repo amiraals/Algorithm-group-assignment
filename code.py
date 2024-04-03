@@ -378,11 +378,15 @@ class HospitalManagementSystem:
                 if queue_display.lower() == "y":
                     print(self.print_consultation_queue())
             elif choice == "5":
-                print(self.process_consultation())
-                self.print_consultation_queue()
-                issue_prescription = input("Issue prescription for all patients (y/n)? ")
-                if issue_prescription.lower() == "y":
-                    print(self.issue_prescription())
+                consultation_response = self.process_consultation()
+                print(consultation_response)
+                if "No patients in the consultation queue" not in consultation_response:
+                    self.print_consultation_queue()
+                    issue_prescription = input("Issue prescription for all patients (y/n)? ")
+                    if issue_prescription.lower() == "y":
+                        print(self.issue_prescription())
+                else:
+                    continue 
             elif choice == "6":
                 patient_id = input("Enter patient ID:")
                 print(self.search_patient(patient_id))
