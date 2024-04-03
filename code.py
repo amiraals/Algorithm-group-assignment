@@ -269,16 +269,19 @@ class HospitalManagementSystem:
     def issue_prescription(self):
         # Issue prescriptions for patients in the consultation queue
         if self.processed_patients:  # Check if there are processed patients
-            prescriptions_issued = []
+            prescription_details_list = []  # List to hold details of issued prescriptions
 
             for patient in self.processed_patients:
                 # Loop through each patient in the list of processed patients
-                prescription = generate_prescriptions(1)[0] # This generates a random prescription
-                patient.pushPrescription(prescription) # Push the prescription onto the patient's stack
-                prescriptions_issued.append(patient.name)
+                prescription = generate_prescriptions(1)[0]  # This generates a random prescription
+                patient.pushPrescription(prescription)  # Push the prescription onto the patient's stack
+                # Format and append prescription details to the list
+                prescription_details = f"Prescription for {patient.name}: {prescription.medication_type} ({prescription.dosage})"
+                prescription_details_list.append(prescription_details)
 
             self.processed_patients.clear()  # Clear the list after issuing prescriptions
-            return "Prescriptions issued for: " + ", ".join(prescriptions_issued)
+            # Join and return the formatted prescription details
+            return "\n".join(prescription_details_list)
         else:
             return "No patients to issue prescriptions to"
 
